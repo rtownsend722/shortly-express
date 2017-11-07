@@ -79,22 +79,44 @@ app.post('/links',
 // Write your authentication routes here
 /************************************************************/
 
-//TODO: if weird errors, may be due to strange results from models. functions
+// Here's where we're at.  We're trying to conditionally handle existing...
+// ...users.  We probably need to add a catch and error to make this work...
+// ...we've also discovered the users module is a thing we should use.  Also,
+// see the .catch and .error examples below for how they previously worked.
+// damnit, nodemon.
+
 app.post('/signup',
 (req, res, next) => {
-  return models.Users.create(req.body)
-  .then(results => {
-    return models.Model.create(results);
-    console.log(results);
-  })
-  .then(() => {
-    res.setHeader('location', '/signup');
-    console.log('headers', res.headers);
-    res.status(200).send();
-  })
-  .catch(err => {
-    res.status(501).send(err);
-  });
+  console.log('if this logs then it works');
+  //   .catch(() => {
+  //     console.log('hey');
+  //     res.setHeader('location', path);
+  //     console.log('headers', res.headers);
+  //     res.status(200).send();
+  //   })
+  //   .error(err => {
+  //     res.status(501).send(err);
+  //   });
+    
+  return models.Users.get({username: req.body.username})
+    .then((results) => {
+      if (results === undefined) {
+        res.setHeader('location', '/');
+        res.status(200).send();
+      }
+    });
+
+    // res.setHeader('location', '/');
+    // res.status(200).send();
+  // if they do not!  add them to the database and redirect..
+  // return models.Users.create(req.body)
+  // .catch(() => {
+  //   res.setHeader('location', '/signup');
+  //   res.status(200).send();
+  // })
+  // .error((err) => {
+  //   res.status(501).send(err);
+  // });
 });
 
 
