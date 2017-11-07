@@ -79,44 +79,34 @@ app.post('/links',
 // Write your authentication routes here
 /************************************************************/
 
-// Here's where we're at.  We're trying to conditionally handle existing...
-// ...users.  We probably need to add a catch and error to make this work...
-// ...we've also discovered the users module is a thing we should use.  Also,
-// see the .catch and .error examples below for how they previously worked.
-// damnit, nodemon.
-
+//TODO: think of a less roundabout way to handle an existing user
+  //specifically, better manage control flow by conditionally invoking .then or .catch
 app.post('/signup',
 (req, res, next) => {
-  console.log('if this logs then it works');
-  //   .catch(() => {
-  //     console.log('hey');
-  //     res.setHeader('location', path);
-  //     console.log('headers', res.headers);
-  //     res.status(200).send();
-  //   })
-  //   .error(err => {
-  //     res.status(501).send(err);
-  //   });
-    
+  var userExists = false;
   return models.Users.get({username: req.body.username})
     .then((results) => {
-      if (results === undefined) {
-        res.setHeader('location', '/');
-        res.status(200).send();
+      if (results !== undefined) {
+        userExists = true;
       }
+    })
+    .then(() => {
+      if (!userExists) {
+        return models.Users.create(req.body);
+      }
+    })
+    .then(() => {
+      var location = '/signup';
+      if (!userExists) {
+        location = '/';
+      }
+      res.setHeader('location', location);
+      res.status(201).send();
+    })
+    .error((err) => {
+      res.status(501).send(err);
     });
 
-    // res.setHeader('location', '/');
-    // res.status(200).send();
-  // if they do not!  add them to the database and redirect..
-  // return models.Users.create(req.body)
-  // .catch(() => {
-  //   res.setHeader('location', '/signup');
-  //   res.status(200).send();
-  // })
-  // .error((err) => {
-  //   res.status(501).send(err);
-  // });
 });
 
 
