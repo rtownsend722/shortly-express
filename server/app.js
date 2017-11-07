@@ -5,6 +5,7 @@ const partials = require('express-partials');
 const bodyParser = require('body-parser');
 const Auth = require('./middleware/auth');
 const models = require('./models');
+const db = require('./db');
 
 const app = express();
 
@@ -78,6 +79,23 @@ app.post('/links',
 // Write your authentication routes here
 /************************************************************/
 
+//TODO: if weird errors, may be due to strange results from models. functions
+app.post('/signup',
+(req, res, next) => {
+  return models.Users.create(req.body)
+  .then(results => {
+    console.log(results);
+    return models.Model.create(results);
+  })
+  .then(() => {
+    res.setHeader('location', '/signup');
+    console.log('headers', res.headers);
+    res.status(200).send();
+  })
+  .error(err => {
+    res.status(501).send(err);
+  });
+});
 
 
 /************************************************************/
