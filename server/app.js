@@ -84,15 +84,15 @@ app.post('/signup',
 (req, res, next) => {
   return models.Users.create(req.body)
   .then(results => {
-    console.log(results);
     return models.Model.create(results);
+    console.log(results);
   })
   .then(() => {
     res.setHeader('location', '/signup');
     console.log('headers', res.headers);
     res.status(200).send();
   })
-  .error(err => {
+  .catch(err => {
     res.status(501).send(err);
   });
 });
