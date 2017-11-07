@@ -106,7 +106,48 @@ app.post('/signup',
     .error((err) => {
       res.status(501).send(err);
     });
+});
 
+app.post('/login', (req, res, next) => {
+  // declare userExists variable, set to false
+  var userExists = false;
+  // declare passwordMatch variable, set to false
+  var passwordMatch = false;
+  return models.Users.get({username: req.body.username})
+    .then((results) => {
+      if (results !== undefined) {
+        userExists = true;
+      }
+      return results;
+    })
+    .then((results) => {
+      if (results) {
+        return models.Users.compare(req.body.password, results.password, results.salt);
+      }
+    })
+    .then((results) => {
+      if (results) {
+        passwordMatch = true;
+      }
+    })
+    .then( () => {
+      // if userExists is true && passwordMatch is true
+      if (userExists && passwordMatch) {
+        // login user
+        res.setHeader('location', '/');
+        res.status(201).send();
+      } else {
+        res.setHeader('location', '/login');
+        res.status(401).send();
+      }
+      // if userExists is false || passwordMatch is false
+        // keep on login page
+        
+    });
+  // check if user exists
+    // if so, set userExists to true
+  // check to see if password matches
+    // if so, set passwordMatch to true
 });
 
 
