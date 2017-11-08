@@ -13,9 +13,7 @@ const parseCookies = (req, res, next) => {
       var individualCookie = cookie.split('=');
       // set cookie object's key value pairs equal to ^
       parsedCookies[individualCookie[0]] = individualCookie[1];
-      console.log('i am the parsed object ', parsedCookies);
     });
-    console.log('i am the parsed object OUTSIDE of the forEach, ', parsedCookies);
     // replace the existing JSON cookie on the request object with the parsed cookie 
     req.cookies = parsedCookies;
     // then()
